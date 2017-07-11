@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "php": ">=5.5.9",
+    "php": ">=5.6.6",
     "elasticsearch/elasticsearch": "~5.0"
   },
   "require-dev": {
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Crowdskout\\ElasticsearchQueryBuilder\\": ""
+      "Crowdskout\\ElasticsearchQueryBuilder\\": "src/"
     }
   }
 }

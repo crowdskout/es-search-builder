@@ -1,2 +1,2 @@
 # elasticsearch-query-builder
-Simplified api and results parsing for Elasticsearch queries and aggregations
+This package provides simplified api and results parsing for Elasticsearch queries and aggregations.  It builds upon the official elasticsearch-php library here: https://github.com/elastic/elasticsearch-php.

@@ -1,7 +1,7 @@
 <?php
 namespace Crowdskout\ElasticsearchQueryBuilder\Tests;
 
-use Crowdskout\ElasticsearchQueryBuilder\Builders\Query;
+use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
 
 class QueryGenerationTest extends TestCase
 {

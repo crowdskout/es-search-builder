@@ -22,7 +22,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Crowdskout\\ElasticsearchQueryBuilder\\": "src/"
+      "Crowdskout\\ElasticsearchQueryBuilder\\": "src/",
+      "Crowdskout\\ElasticsearchQueryBuilder\\Tests\\": "tests/"
     }
   }
 }

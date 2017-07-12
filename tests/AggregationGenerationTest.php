@@ -6,9 +6,17 @@ use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
 
 class AggregationGenerationTest extends TestCase
 {
+    /** @var Agg */
+    protected $aggBuilder;
+
+    public function setUp()
+    {
+        $this->aggBuilder = new Agg();
+    }
+
     public function testFilterAggregation()
     {
-        $agg = Agg::filter(Query::term('test_term', 1),);
+        $agg = $this->aggBuilder->filter(Query::term('test_term', 1));
         $this->assertEquals([
             'filter_agg' => [
                 'filter' => [
@@ -28,10 +36,10 @@ class AggregationGenerationTest extends TestCase
 
     public function testFiltersAggregation()
     {
-        $agg = Agg::filters([
+        $agg = $this->aggBuilder->filters([
             'TestTerm1' => Query::term('test_term', 1),
             'TestTerm2' => Query::term('test_term', 2)
-        ],);
+        ]);
 
         $this->assertEquals([
             'filters_agg' => [
@@ -83,7 +91,7 @@ class AggregationGenerationTest extends TestCase
             'format' => 'date_time_no_millis',
             'min_doc_count' => 0
         ];
-        $agg = Agg::dateHistogram($dateHistogramField, , $dateHistogramOptions);
+        $agg = $this->aggBuilder->dateHistogram($dateHistogramField, $dateHistogramOptions);
 
         $this->assertEquals([
             'when_date_histogram_agg' => [
@@ -131,7 +139,7 @@ class AggregationGenerationTest extends TestCase
             ['key' => "19-70", 'from' => 19, 'to' => 70],
             ['key' => "71-*", 'from' => 70],
         ];
-        $agg = Agg::range($rangeField, , $ranges);
+        $agg = $this->aggBuilder->range($rangeField, $ranges);
 
         $this->assertEquals([
             'integerField_range_agg' => [
@@ -173,7 +181,7 @@ class AggregationGenerationTest extends TestCase
     public function testSumAggregation()
     {
         $sumField = 'someField';
-        $agg = Agg::sum($sumField,);
+        $agg = $this->aggBuilder->sum($sumField);
 
         $this->assertEquals([
             "{$sumField}_sum_agg" => [
@@ -198,7 +206,7 @@ class AggregationGenerationTest extends TestCase
     public function testReverseNestedAggregation()
     {
         $termsField = 'test.nested.field';
-        $agg = Agg::terms($termsField, , [], Agg::reverseNested());
+        $agg = $this->aggBuilder->terms($termsField, [], $this->aggBuilder->reverseNested());
 
         $this->assertEquals([
             'test.nested.field_terms_agg' => [
@@ -253,7 +261,7 @@ class AggregationGenerationTest extends TestCase
 
     public function testNestedAggregation()
     {
-        $agg = Agg::nested('parentField', , Agg::terms('parentField.value',));
+        $agg = $this->aggBuilder->nested('parentField', $this->aggBuilder->terms('parentField.value'));
         $this->assertEquals([
             'parentField_nested_agg' => [
                 'nested' => [
@@ -303,9 +311,9 @@ class AggregationGenerationTest extends TestCase
 
     public function testAggregationMulti()
     {
-        $agg = Agg::nested('parentField',)->setMulti(Agg::multi([
-            "Value1" => Agg::filter(Query::term('parentField.value', "Value1"),),
-            "Value2" => Agg::filter(Query::term('parentField.value', "Value2"),),
+        $agg = $this->aggBuilder->nested('parentField')->setMulti($this->aggBuilder->multi([
+            "Value1" => $this->aggBuilder->filter(Query::term('parentField.value', "Value1")),
+            "Value2" => $this->aggBuilder->filter(Query::term('parentField.value', "Value2")),
         ]));
         $this->assertEquals([
             'parentField_nested_agg' => [
@@ -375,9 +383,9 @@ class AggregationGenerationTest extends TestCase
 
 
         // Testing that the order put into the array is what gets returned
-        $agg = Agg::nested('parentField',)->setMulti(Agg::multi([
-            "Value2" => Agg::filter(Query::term('parentField.value', "Value2"),),
-            "Value1" => Agg::filter(Query::term('parentField.value', "Value1"),)
+        $agg = $this->aggBuilder->nested('parentField')->setMulti($this->aggBuilder->multi([
+            "Value2" => $this->aggBuilder->filter(Query::term('parentField.value', "Value2")),
+            "Value1" => $this->aggBuilder->filter(Query::term('parentField.value', "Value1"))
         ]));
 
         $this->assertEquals([

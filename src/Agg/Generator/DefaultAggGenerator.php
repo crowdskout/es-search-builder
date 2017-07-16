@@ -193,7 +193,7 @@ class DefaultAggGenerator implements AggGeneratorInterface
         } else {
             $generator = function ($results) use ($aggName) {
                 foreach ($results[$aggName]['buckets'] as $bucket) {
-                    yield ucwords($bucket['key']) => new AggResult($bucket['doc_count'], $bucket);
+                    yield $bucket['key'] => new AggResult($bucket['doc_count'], $bucket);
                 }
             };
         }
@@ -209,7 +209,7 @@ class DefaultAggGenerator implements AggGeneratorInterface
     {
         $generator = function ($results) use ($aggName) {
             foreach ($results[$aggName]['buckets'] as $key => $bucket) {
-                yield ucwords($key) => new AggResult($bucket['doc_count'], $bucket);
+                yield $key => new AggResult($bucket['doc_count'], $bucket);
             }
         };
 

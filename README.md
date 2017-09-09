@@ -108,3 +108,34 @@ Use the agg object to parse the results from Elasticsearch as well
 # Installation using Composer
 If you don't have composer, please install it - https://getcomposer.org/
 
+Add this package to your project from the terminal.
+```bash
+composer require crowdskout/es-search-builder
+```
+
+If your project is not already setup to autoload composer libraries, you can put this at the top of your boostrap file or script
+```php
+    use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
+    use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
+
+    require 'vendor/autoload.php';
+
+    // Query
+    $query = Query::terms('intField', [1, 2, 3, 4, 5, 6])
+    
+    // Agg
+    $aggBuilder = new AggBuilder();
+        
+    $agg = $aggBuilder->nested('parentField', $aggBuilder->terms('parentField.subField'));
+    $aggQuery = $agg->generateQuery();
+```
+
+# This library does not currently support all queries and aggregations
+The current supported queries are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Query/Builder/Query.php.
+The current supported aggregations are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Agg/Builder/AggQuery.php.
+
+If there's a query or or aggregation that you would like to see supported, please open an issue.  You can also take as stab at writing it and open a pull request :).
+
+
+# Additional examples
+You can see other, more complex examples of queries and aggregations in the tests/ directory.  You can also see an example of a custom agg results generator in tests/AggGeneratorTest.php/

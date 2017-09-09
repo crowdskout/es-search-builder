@@ -1,6 +1,6 @@
 {
-  "name": "crowdskout/elasticsearch-query-builder",
-  "description": "Simplified api and results parsing for Elasticsearch queries and aggregations",
+  "name": "crowdskout/es-search-builder",
+  "description": "Simplified Elasticsearch search api and results parsing for queries and aggregations",
   "keywords": [
     "elasticsearch"
   ],

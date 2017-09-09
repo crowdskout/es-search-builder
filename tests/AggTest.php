@@ -4,7 +4,7 @@ namespace Crowdskout\ElasticsearchQueryBuilder\Tests;
 use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
 use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
 
-class AggregationGenerationTest extends TestCase
+class AggTest extends TestCase
 {
     public function testFilterAggregation()
     {

@@ -130,6 +130,38 @@ If your project is not already setup to autoload composer libraries, you can put
     $aggQuery = $agg->generateQuery();
 ```
 
+# Usage with elasticsearch-php
+This library creates simple arrays to pass into the body portion of Elasticsearch search queries.  You can pass the aggregation portion of the search result into the generateQuery function of the aggregation.
+```php
+    use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
+    use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
+    use Elasticsearch\ClientBuilder;
+    
+    // Build a query
+    $query = Query::terms('intField', [1, 2, 3, 4, 5, 6])
+    
+    // Build an aggregation
+    $aggBuilder = new AggBuilder();
+    $agg = $aggBuilder->nested('parentField', $aggBuilder->terms('parentField.subField'));
+    
+    // Initialize the Elasticsearch client
+    $client = ClientBuilder::create()->build()
+    
+    // Run the search query
+    $params = [
+            'index' => 'my_index',
+            'type' => 'my_type',
+            'body' => [
+                'query' => $query,
+                'aggs' => $agg->generateQuery()
+            ]
+        ];
+    $response = $client->search($params);
+    
+    // Parse the results
+    $parsedResult = $agg->generateResults($response['aggregations']);
+```
+
 # This library does not currently support all queries and aggregations
 The current supported queries are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Query/Builder/Query.php.
 The current supported aggregations are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Agg/Builder/AggQuery.php.

@@ -3,24 +3,19 @@ namespace Crowdskout\ElasticsearchQueryBuilder\Agg\Generator;
 
 interface AggGeneratorInterface
 {
-    /**
-     * @param string $aggName
-     * @param bool $keyAsString
-     * @return callable
-     */
-    public static function bucketGenerator($aggName, $keyAsString = false);
+    public function getFilterGenerator($aggName, $filterKey = '');
 
-    /**
-     * @param string $aggName
-     * @return callable
-     */
-    public static function keyedBucketGenerator($aggName);
+    public function getFiltersGenerator($aggName);
 
-    /**
-     * @param string $aggName
-     * @param string $key
-     * @param string $valueField
-     * @return callable
-     */
-    public static function singleValueGenerator($aggName, $key = '', $valueField = 'doc_count');
+    public function getTermsGenerator($aggName);
+
+    public function getDateHistogramGenerator($aggName, $keyAsString = true);
+
+    public function getRangeGenerator($aggName);
+
+    public function getSumGenerator($aggName, $filterKey = 'Sum');
+
+    public function getNestedGenerator($aggName);
+
+    public function getReverseNestedGenerator($aggName);
 }

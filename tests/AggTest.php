@@ -1,14 +1,16 @@
 <?php
 namespace Crowdskout\ElasticsearchQueryBuilder\Tests;
 
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg;
+use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
 use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
 
-class AggregationGenerationTest extends TestCase
+class AggTest extends TestCase
 {
     public function testFilterAggregation()
     {
-        $agg = Agg::filter(Query::term('test_term', 1),);
+        $aggBuilder = new AggBuilder();
+
+        $agg = $aggBuilder->filter(Query::term('test_term', 1));
         $this->assertEquals([
             'filter_agg' => [
                 'filter' => [
@@ -28,10 +30,12 @@ class AggregationGenerationTest extends TestCase
 
     public function testFiltersAggregation()
     {
-        $agg = Agg::filters([
+        $aggBuilder = new AggBuilder();
+
+        $agg = $aggBuilder->filters([
             'TestTerm1' => Query::term('test_term', 1),
             'TestTerm2' => Query::term('test_term', 2)
-        ],);
+        ]);
 
         $this->assertEquals([
             'filters_agg' => [
@@ -75,6 +79,8 @@ class AggregationGenerationTest extends TestCase
 
     public function testDateHistogramAggregation()
     {
+        $aggBuilder = new AggBuilder();
+
         $dateHistogramField = 'when';
         $dateHistogramOptions = [
             'interval' => 'day',
@@ -83,7 +89,7 @@ class AggregationGenerationTest extends TestCase
             'format' => 'date_time_no_millis',
             'min_doc_count' => 0
         ];
-        $agg = Agg::dateHistogram($dateHistogramField, , $dateHistogramOptions);
+        $agg = $aggBuilder->dateHistogram($dateHistogramField, $dateHistogramOptions);
 
         $this->assertEquals([
             'when_date_histogram_agg' => [
@@ -125,13 +131,15 @@ class AggregationGenerationTest extends TestCase
 
     public function testRangeAggregation()
     {
+        $aggBuilder = new AggBuilder();
+
         $rangeField = 'integerField';
         $ranges = [
             ['key' => "*-18", 'to' => 18],
             ['key' => "19-70", 'from' => 19, 'to' => 70],
             ['key' => "71-*", 'from' => 70],
         ];
-        $agg = Agg::range($rangeField, , $ranges);
+        $agg = $aggBuilder->range($rangeField, $ranges);
 
         $this->assertEquals([
             'integerField_range_agg' => [
@@ -172,8 +180,10 @@ class AggregationGenerationTest extends TestCase
 
     public function testSumAggregation()
     {
+        $aggBuilder = new AggBuilder();
+
         $sumField = 'someField';
-        $agg = Agg::sum($sumField,);
+        $agg = $aggBuilder->sum($sumField);
 
         $this->assertEquals([
             "{$sumField}_sum_agg" => [
@@ -197,8 +207,10 @@ class AggregationGenerationTest extends TestCase
 
     public function testReverseNestedAggregation()
     {
+        $aggBuilder = new AggBuilder();
+
         $termsField = 'test.nested.field';
-        $agg = Agg::terms($termsField, , [], Agg::reverseNested());
+        $agg = $aggBuilder->terms($termsField, [], $aggBuilder->reverseNested());
 
         $this->assertEquals([
             'test.nested.field_terms_agg' => [
@@ -253,7 +265,9 @@ class AggregationGenerationTest extends TestCase
 
     public function testNestedAggregation()
     {
-        $agg = Agg::nested('parentField', , Agg::terms('parentField.value',));
+        $aggBuilder = new AggBuilder();
+
+        $agg = $aggBuilder->nested('parentField', $aggBuilder->terms('parentField.value'));
         $this->assertEquals([
             'parentField_nested_agg' => [
                 'nested' => [
@@ -303,9 +317,11 @@ class AggregationGenerationTest extends TestCase
 
     public function testAggregationMulti()
     {
-        $agg = Agg::nested('parentField',)->setMulti(Agg::multi([
-            "Value1" => Agg::filter(Query::term('parentField.value', "Value1"),),
-            "Value2" => Agg::filter(Query::term('parentField.value', "Value2"),),
+        $aggBuilder = new AggBuilder();
+
+        $agg = $aggBuilder->nested('parentField')->setMulti($aggBuilder->multi([
+            "Value1" => $aggBuilder->filter(Query::term('parentField.value', "Value1")),
+            "Value2" => $aggBuilder->filter(Query::term('parentField.value', "Value2")),
         ]));
         $this->assertEquals([
             'parentField_nested_agg' => [
@@ -375,9 +391,9 @@ class AggregationGenerationTest extends TestCase
 
 
         // Testing that the order put into the array is what gets returned
-        $agg = Agg::nested('parentField',)->setMulti(Agg::multi([
-            "Value2" => Agg::filter(Query::term('parentField.value', "Value2"),),
-            "Value1" => Agg::filter(Query::term('parentField.value', "Value1"),)
+        $agg = $aggBuilder->nested('parentField')->setMulti($aggBuilder->multi([
+            "Value2" => $aggBuilder->filter(Query::term('parentField.value', "Value2")),
+            "Value1" => $aggBuilder->filter(Query::term('parentField.value', "Value1"))
         ]));
 
         $this->assertEquals([

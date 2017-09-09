@@ -5,24 +5,36 @@ use Crowdskout\ElasticsearchQueryBuilder\Agg\Aggregation;
 use Crowdskout\ElasticsearchQueryBuilder\Agg\AggregationInterface;
 use Crowdskout\ElasticsearchQueryBuilder\Agg\AggregationMulti;
 use Crowdskout\ElasticsearchQueryBuilder\Agg\AggResult;
+use Crowdskout\ElasticsearchQueryBuilder\Agg\Generator\AggGeneratorInterface;
+use Crowdskout\ElasticsearchQueryBuilder\Agg\Generator\DefaultAggGenerator;
 
 class Agg
 {
+    /** @var AggGeneratorInterface */
+    protected $aggGenerator;
+
+    public function __construct(AggGeneratorInterface $aggGenerator = null)
+    {
+        if ($aggGenerator === null) {
+            $aggGenerator = new DefaultAggGenerator();
+        }
+        $this->aggGenerator = $aggGenerator;
+    }
+
     /**
      * @param array $query
      * @param Aggregation $nestedAgg
      * @param string|null $filterKey
      * @return Aggregation
      */
-    public static function filter($query, $nestedAgg = null, $filterKey = '')
+    public function filter($query, $nestedAgg = null, $filterKey = '')
     {
         $aggName = 'filter_agg';
-        $query = [
-            $aggName => [
-                'filter' => $query
-            ]
-        ];
-        return new Aggregation($query, self::singleValueGenerator($aggName, $filterKey), $nestedAgg);
+        return new Aggregation(
+            AggQuery::filter($query, $aggName),
+            $this->aggGenerator->getFilterGenerator($aggName, $filterKey),
+            $nestedAgg
+        );
     }
 
     /**
@@ -30,17 +42,14 @@ class Agg
      * @param Aggregation $nestedAgg
      * @return Aggregation
      */
-    public static function filters($queries, $nestedAgg = null)
+    public function filters($queries, $nestedAgg = null)
     {
         $aggName = 'filters_agg';
-        $query = [
-            $aggName => [
-                'filters' => [
-                    'filters' => $queries,
-                ]
-            ]
-        ];
-        return new Aggregation($query, self::keyedBucketGenerator($aggName), $nestedAgg);
+        return new Aggregation(
+            AggQuery::filters($queries, $aggName),
+            $this->aggGenerator->getFiltersGenerator($aggName),
+            $nestedAgg
+        );
     }
 
     /**
@@ -49,72 +58,64 @@ class Agg
      * @param Aggregation $nestedAgg
      * @return Aggregation
      */
-    public static function terms($field, $termsOptions = [], $nestedAgg = null)
+    public function terms($field, $termsOptions = [], $nestedAgg = null)
     {
         $aggName = "{$field}_terms_agg";
-        $termsOptions['field'] = $field;
-        $query = [
-            $aggName => [
-                'terms' => $termsOptions
-            ]
-        ];
-        return new Aggregation($query, self::bucketGenerator($aggName), $nestedAgg);
+        return new Aggregation(
+            AggQuery::terms($field, $termsOptions, $aggName),
+            $this->aggGenerator->getTermsGenerator($aggName),
+            $nestedAgg
+        );
     }
 
     /**
      * @param string $field
      * @param array $dateHistogramOptions
      * @param Aggregation $nestedAgg
+     * @param bool $keyAsString
      * @return Aggregation
      */
-    public static function dateHistogram($field, $dateHistogramOptions = [], $nestedAgg = null)
+    public function dateHistogram($field, $dateHistogramOptions = [], $nestedAgg = null, $keyAsString = true)
     {
-        $dateHistogramOptions['field'] = $field;
         $aggName = "{$field}_date_histogram_agg";
-        $query = [
-            $aggName => [
-                'date_histogram' => $dateHistogramOptions
-            ]
-        ];
-        return new Aggregation($query, self::bucketGenerator($aggName, true), $nestedAgg);
+        return new Aggregation(
+            AggQuery::dateHistogram($field, $dateHistogramOptions, $aggName),
+            $this->aggGenerator->getDateHistogramGenerator($aggName, $keyAsString),
+            $nestedAgg
+        );
     }
 
     /**
      * @param string $field
      * @param array $ranges
+     * @param array $rangeOptions
      * @param Aggregation $nestedAgg
      * @return Aggregation
      */
-    public static function range($field, $ranges, $nestedAgg = null)
+    public function range($field, $ranges, $rangeOptions = [], $nestedAgg = null)
     {
         $aggName = "{$field}_range_agg";
-        $query = [
-            $aggName => [
-                'range' => [
-                    'field' => $field,
-                    'ranges' => $ranges
-                ]
-            ]
-        ];
-        return new Aggregation($query, self::bucketGenerator($aggName), $nestedAgg);
+        return new Aggregation(
+            AggQuery::range($field, $ranges, $rangeOptions, $aggName),
+            $this->aggGenerator->getRangeGenerator($aggName),
+            $nestedAgg
+        );
     }
 
     /**
      * @param string $field
      * @param Aggregation $nestedAgg
+     * @param string $filterKey
      * @return Aggregation
      */
-    public static function sum($field, $nestedAgg = null)
+    public function sum($field, $nestedAgg = null, $filterKey = 'Sum')
     {
         $aggName = "{$field}_sum_agg";
-        $query = [
-            $aggName => [
-                'sum' => [
-                    'field' => $field
-                ]
-            ]
-        ];
-        return new Aggregation($query, self::singleValueGenerator($aggName, "Sum", "value"), $nestedAgg);
+        return new Aggregation(
+            AggQuery::sum($field, $aggName),
+            $this->aggGenerator->getSumGenerator($aggName, $filterKey),
+            $nestedAgg
+        );
     }
 
     /**
@@ -122,102 +123,37 @@ class Agg
      * @param array $nestedAgg
      * @return Aggregation
      */
-    public static function nested($path, $nestedAgg = null)
+    public function nested($path, $nestedAgg = null)
     {
         $aggName = "{$path}_nested_agg";
-        $query = [
-            $aggName => [
-                'nested' => [
-                    'path' => $path
-                ]
-            ]
-        ];
-        return new Aggregation($query, self::singleValueGenerator($aggName), $nestedAgg);
+        return new Aggregation(
+            AggQuery::nested($path, $aggName),
+            $this->aggGenerator->getNestedGenerator($aggName),
+            $nestedAgg
+        );
     }
 
     /**
      * @param Aggregation $nestedAgg
      * @return Aggregation
      */
-    public static function reverseNested($nestedAgg = null)
+    public function reverseNested($nestedAgg = null)
     {
         $aggName = "reverse_nested_agg";
-        $query = [
-            $aggName => [
-                'reverse_nested' => (object)[]
-            ]
-        ];
-        return new Aggregation($query, self::singleValueGenerator($aggName), $nestedAgg);
+        return new Aggregation(
+            AggQuery::reverseNested($aggName),
+            $this->aggGenerator->getReverseNestedGenerator($aggName),
+            $nestedAgg
+        );
     }
 
     /**
      * @param AggregationInterface[] $aggs
      * @return AggregationMulti
      */
-    public static function multi($aggs)
+    public function multi($aggs)
     {
         return new AggregationMulti($aggs);
-    }
-
-    /**
-     * @param string $aggName
-     * @param bool $keyAsString
-     * @return callable
-     */
-    public static function bucketGenerator($aggName, $keyAsString = false)
-    {
-        // should be more efficient to have the logic outside of the generator and loop
-        if ($keyAsString) {
-            $generator = function ($results) use ($aggName) {
-                foreach ($results[$aggName]['buckets'] as $bucket) {
-                    yield $bucket['key_as_string'] => new AggResult($bucket['doc_count'], $bucket);
-                }
-            };
-        } else {
-            $generator = function ($results) use ($aggName) {
-                foreach ($results[$aggName]['buckets'] as $bucket) {
-                    yield ucwords($bucket['key']) => new AggResult($bucket['doc_count'], $bucket);
-                }
-            };
-        }
-
-        return $generator;
-    }
-
-    /**
-     * @param string $aggName
-     * @return callable
-     */
-    public static function keyedBucketGenerator($aggName)
-    {
-        $generator = function ($results) use ($aggName) {
-            foreach ($results[$aggName]['buckets'] as $key => $bucket) {
-                yield ucwords($key) => new AggResult($bucket['doc_count'], $bucket);
-            }
-        };
-
-        return $generator;
-    }
-
-    /**
-     * @param string $aggName
-     * @param string $key
-     * @param string $valueField
-     * @return callable
-     */
-    public static function singleValueGenerator($aggName, $key = '', $valueField = 'doc_count')
-    {
-        if ($key === '') {
-            $generator = function ($results) use ($aggName, $valueField) {
-                yield new AggResult($results[$aggName][$valueField], $results[$aggName]);
-            };
-        } else {
-            $generator = function ($results) use ($aggName, $key, $valueField) {
-                yield $key => new AggResult($results[$aggName][$valueField], $results[$aggName]);
-            };
-        }
-
-        return $generator;
     }
 
     public static function make()

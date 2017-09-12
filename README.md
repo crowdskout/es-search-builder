@@ -164,6 +164,7 @@ This library creates simple arrays to pass into the body portion of Elasticsearc
 
 # This library does not currently support all queries and aggregations
 The current supported queries are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Query.php.
+
 The current supported aggregations are here: https://github.com/crowdskout/es-search-builder/blob/master/src/AggQuery.php.
 
 If there's a query or or aggregation that you would like to see supported, please open an issue.  You can also take a stab at writing it and open a pull request :).

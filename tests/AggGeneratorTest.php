@@ -1,9 +1,9 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Tests;
+namespace Crowdskout\EsSearchBuilder\Tests;
 
-use Crowdskout\ElasticsearchQueryBuilder\Agg\AggResult;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Generator\DefaultAggGenerator;
+use Crowdskout\EsSearchBuilder\Aggregation\AggResult;
+use Crowdskout\EsSearchBuilder\Agg as AggBuilder;
+use Crowdskout\EsSearchBuilder\Aggregation\Generator\DefaultAggGenerator;
 
 class AggGeneratorTest extends TestCase
 {

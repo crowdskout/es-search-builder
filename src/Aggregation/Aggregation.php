@@ -1,5 +1,5 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Agg;
+namespace Crowdskout\EsSearchBuilder\Aggregation;
 
 use Generator;
 

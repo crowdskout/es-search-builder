@@ -1,8 +1,8 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Tests;
+namespace Crowdskout\EsSearchBuilder\Tests;
 
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
-use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
+use Crowdskout\EsSearchBuilder\Agg as AggBuilder;
+use Crowdskout\EsSearchBuilder\Query;
 
 class AggTest extends TestCase
 {

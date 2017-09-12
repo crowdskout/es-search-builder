@@ -1,5 +1,5 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Agg\Generator;
+namespace Crowdskout\EsSearchBuilder\Aggregation\Generator;
 
 interface AggGeneratorInterface
 {

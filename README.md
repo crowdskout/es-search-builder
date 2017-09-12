@@ -29,7 +29,7 @@ The query api provides simpler, less verbose query generation.
 
 ## Quick example - Agg builder api
 ```php
-    use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
+    use Crowdskout\EsSearchBuilder\Agg as AggBuilder;
     
     $aggBuilder = new AggBuilder();
     
@@ -115,8 +115,8 @@ composer require crowdskout/es-search-builder
 
 If your project is not already setup to autoload composer libraries, you can put this at the top of your boostrap file or script
 ```php
-    use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
-    use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
+    use Crowdskout\EsSearchBuilder\Agg as AggBuilder;
+    use Crowdskout\EsSearchBuilder\Query;
 
     require 'vendor/autoload.php';
 
@@ -133,8 +133,8 @@ If your project is not already setup to autoload composer libraries, you can put
 # Usage with elasticsearch-php
 This library creates simple arrays to pass into the body portion of Elasticsearch search queries.  You can pass the aggregation portion of the search result into the generateQuery function of the aggregation.
 ```php
-    use Crowdskout\ElasticsearchQueryBuilder\Agg\Builder\Agg as AggBuilder;
-    use Crowdskout\ElasticsearchQueryBuilder\Query\Builder\Query;
+    use Crowdskout\EsSearchBuilder\Agg as AggBuilder;
+    use Crowdskout\EsSearchBuilder\Query;
     use Elasticsearch\ClientBuilder;
     
     // Build a query
@@ -163,8 +163,8 @@ This library creates simple arrays to pass into the body portion of Elasticsearc
 ```
 
 # This library does not currently support all queries and aggregations
-The current supported queries are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Query/Builder/Query.php.
-The current supported aggregations are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Agg/Builder/AggQuery.php.
+The current supported queries are here: https://github.com/crowdskout/es-search-builder/blob/master/src/Query.php.
+The current supported aggregations are here: https://github.com/crowdskout/es-search-builder/blob/master/src/AggQuery.php.
 
 If there's a query or or aggregation that you would like to see supported, please open an issue.  You can also take a stab at writing it and open a pull request :).
 

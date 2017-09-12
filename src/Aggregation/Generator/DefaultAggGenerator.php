@@ -1,7 +1,7 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Agg\Generator;
+namespace Crowdskout\EsSearchBuilder\Aggregation\Generator;
 
-use Crowdskout\ElasticsearchQueryBuilder\Agg\AggResult;
+use Crowdskout\EsSearchBuilder\Aggregation\AggResult;
 
 class DefaultAggGenerator implements AggGeneratorInterface
 {

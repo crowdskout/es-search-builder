@@ -1,5 +1,5 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Agg\Builder;
+namespace Crowdskout\EsSearchBuilder;
 
 class AggQuery
 {

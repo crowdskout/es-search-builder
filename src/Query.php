@@ -1,5 +1,5 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Query\Builder;
+namespace Crowdskout\EsSearchBuilder;
 
 class Query
 {

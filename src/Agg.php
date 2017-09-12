@@ -1,12 +1,12 @@
 <?php
-namespace Crowdskout\ElasticsearchQueryBuilder\Agg\Builder;
+namespace Crowdskout\EsSearchBuilder;
 
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Aggregation;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\AggregationInterface;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\AggregationMulti;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\AggResult;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Generator\AggGeneratorInterface;
-use Crowdskout\ElasticsearchQueryBuilder\Agg\Generator\DefaultAggGenerator;
+use Crowdskout\EsSearchBuilder\Aggregation\Aggregation;
+use Crowdskout\EsSearchBuilder\Aggregation\AggregationInterface;
+use Crowdskout\EsSearchBuilder\Aggregation\AggregationMulti;
+use Crowdskout\EsSearchBuilder\Aggregation\AggResult;
+use Crowdskout\EsSearchBuilder\Aggregation\Generator\AggGeneratorInterface;
+use Crowdskout\EsSearchBuilder\Aggregation\Generator\DefaultAggGenerator;
 
 class Agg
 {
